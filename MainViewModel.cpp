@@ -37,6 +37,8 @@ void MainViewModel::close()
     if (!m_loaded) {
         return;
     }
+    m_pktInfos.clear();
+
     m_loaded = false;
     emit loadedChanged();
     m_filepath = "";

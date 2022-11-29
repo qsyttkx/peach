@@ -40,7 +40,7 @@ Window {
     Rectangle {
         anchors.bottom: parent.bottom
         anchors.top: controlBar.bottom
-        color: "darkgray"
+        color: "#1A1A1A"
         width: parent.width
 
         PacketHistogram {
