@@ -38,6 +38,7 @@ void MainViewModel::close()
         return;
     }
     m_pktInfos.clear();
+    m_maxPktSize = 0;
 
     m_loaded = false;
     emit loadedChanged();
