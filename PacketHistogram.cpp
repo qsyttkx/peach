@@ -27,7 +27,6 @@ void PacketHistogram::paint(QPainter* painter)
 
     constexpr qreal lineWidth = 4;
 
-    painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
 
     QPen pen(Qt::PenStyle::SolidLine);
