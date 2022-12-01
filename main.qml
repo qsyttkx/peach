@@ -1,57 +1,90 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
+import QtQuick.Layouts
 import Peach
 
-Window {
+ApplicationWindow {
+    id: root
     height: 540
     title: viewModel.filepath.length > 0 ? ("Peach - " + viewModel.filepath) : "Peach"
     visible: true
     width: 960
+    property real lineWidth: 1
 
     Component.onCompleted: {
-        histogram.setViewModel(viewModel);
+        histogram.setViewModel(viewModel)
     }
 
     MainViewModel {
         id: viewModel
     }
-    Row {
-        id: controlBar
-        height: childrenRect.height
-        width: parent.width
 
-        Button {
-            text: "Open"
-
-            onClicked: {
-                fileDialog.open();
+    menuBar: MenuBar {
+        Menu {
+            title: "File"
+            Action {
+                text: "&Open"
+                shortcut: "ctrl+o"
+                onTriggered: {
+                    fileDialog.open()
+                }
             }
-        }
-        Button {
-            enabled: viewModel.loaded
-            text: "Close"
-
-            onClicked: {
-                viewModel.close();
+            Action {
+                text: "Close"
+                enabled: viewModel.loaded
+                onTriggered: {
+                    viewModel.close()
+                }
+            }
+            MenuSeparator {}
+            Action {
+                text: "&Quit"
+                shortcut: "ctrl+q"
+                onTriggered: {
+                    root.close()
+                }
             }
         }
     }
+
     Rectangle {
-        anchors.bottom: parent.bottom
-        anchors.top: controlBar.bottom
+        anchors.fill: parent
         color: "#1A1A1A"
-        width: parent.width
 
         PacketHistogram {
             id: histogram
+            lineWidth: root.lineWidth
             anchors.fill: parent
         }
     }
+
     FileDialog {
         id: fileDialog
         onAccepted: {
-            viewModel.open(selectedFile);
+            viewModel.open(selectedFile)
+        }
+    }
+
+    WheelHandler {
+        enabled: viewModel.loaded
+        onWheel: function (wheel) {
+            if (wheel.modifiers & Qt.ControlModifier) {
+                console.log("wheel.angleDelta.y: " + wheel.angleDelta.y)
+                let w = root.lineWidth
+                if (wheel.angleDelta.y > 0) {
+                    w *= 2
+                } else if (wheel.angleDelta.y < 0) {
+                    w /= 2
+                }
+                if (w < 0.1) {
+                    w = 0.1
+                }
+                if (w > 4) {
+                    w = 4
+                }
+                root.lineWidth = w
+            }
         }
     }
 }

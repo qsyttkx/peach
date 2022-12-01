@@ -4,7 +4,11 @@
 
 int main(int argc, char* argv[])
 {
-    QQuickStyle::setStyle("Universal");
+    QQuickStyle::setStyle("Material");
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_THEME", "Dark");
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_ACCENT", "Cyan");
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_VARIANT", "Dense");
+
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;

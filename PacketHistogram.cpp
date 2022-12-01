@@ -16,7 +16,7 @@ PacketHistogram::~PacketHistogram() { }
 void PacketHistogram::setViewModel(MainViewModel* viewModel)
 {
     m_viewModel = viewModel;
-    connect(m_viewModel, &MainViewModel::loadedChanged, [this]() { update(); });
+    connect(m_viewModel, &MainViewModel::loadedChanged, this, [this]() { update(); });
 }
 
 void PacketHistogram::paint(QPainter* painter)
@@ -25,17 +25,15 @@ void PacketHistogram::paint(QPainter* painter)
         return;
     }
 
-    constexpr qreal lineWidth = 4;
-
     painter->setRenderHint(QPainter::Antialiasing);
 
     QPen pen(Qt::PenStyle::SolidLine);
-    pen.setWidthF(lineWidth);
+    pen.setWidthF(m_lineWidth);
 
     auto& infos = m_viewModel->pktInfos();
     int maxSize = m_viewModel->maxPktSize();
     for (int i = 0; i < infos.size(); i++) {
-        qreal x = i * lineWidth;
+        qreal x = i * m_lineWidth;
         if (x > width()) {
             break;
         }
@@ -44,4 +42,13 @@ void PacketHistogram::paint(QPainter* painter)
         painter->setPen(pen);
         painter->drawLine(QPointF(x, height() - y), QPointF(x, height()));
     }
+}
+
+qreal PacketHistogram::lineWidth() const { return m_lineWidth; }
+
+void PacketHistogram::setLineWidth(qreal width)
+{
+    m_lineWidth = width;
+    emit lineWidthChanged();
+    update();
 }
