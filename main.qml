@@ -34,7 +34,7 @@ ApplicationWindow {
                 text: "Close"
                 enabled: viewModel.loaded
                 onTriggered: {
-                    viewModel.close()
+                    viewModel.unload()
                 }
             }
             MenuSeparator {}
@@ -62,7 +62,7 @@ ApplicationWindow {
     FileDialog {
         id: fileDialog
         onAccepted: {
-            viewModel.open(selectedFile)
+            viewModel.load(selectedFile)
         }
     }
 
@@ -70,7 +70,6 @@ ApplicationWindow {
         enabled: viewModel.loaded
         onWheel: function (wheel) {
             if (wheel.modifiers & Qt.ControlModifier) {
-                console.log("wheel.angleDelta.y: " + wheel.angleDelta.y)
                 let w = root.lineWidth
                 if (wheel.angleDelta.y > 0) {
                     w *= 2

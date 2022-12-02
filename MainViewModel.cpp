@@ -15,14 +15,14 @@ bool MainViewModel::loaded() const { return m_loaded; }
 
 QString MainViewModel::filepath() const { return m_filepath; }
 
-void MainViewModel::open(QUrl filepath)
+void MainViewModel::load(QUrl filepath)
 {
-    close();
+    unload();
     QString localFilepath = filepath.toLocalFile();
-    qDebug() << "Open " << localFilepath;
+    qDebug() << "Load " << localFilepath;
 
     if (!demux(localFilepath.toStdString().c_str())) {
-        qCritical() << "Open failed!";
+        qCritical() << "Load failed!";
         return;
     }
 
@@ -32,7 +32,7 @@ void MainViewModel::open(QUrl filepath)
     emit filepathChanged();
 }
 
-void MainViewModel::close()
+void MainViewModel::unload()
 {
     if (!m_loaded) {
         return;
