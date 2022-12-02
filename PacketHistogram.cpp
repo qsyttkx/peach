@@ -40,7 +40,7 @@ void PacketHistogram::paint(QPainter* painter)
 
     auto& infos = m_viewModel->pktInfos();
     int maxSize = m_viewModel->maxPktSize();
-    qreal x = 0;
+    qreal x = m_lineWidth / 2;
     for (int i = m_startIndex; i < infos.size(); i++) {
         if (x > width()) {
             break;
@@ -50,6 +50,9 @@ void PacketHistogram::paint(QPainter* painter)
         painter->setPen(pen);
         painter->drawLine(QPointF(x, height() - y), QPointF(x, height()));
         x += m_lineWidth;
+    }
+    if (x < width()) {
+        painter->fillRect(QRectF(x, 0, width() - x, height()), QBrush(Qt::black));
     }
 }
 
