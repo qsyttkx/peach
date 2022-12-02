@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
-import QtQuick.Layouts
 import Peach
 
 ApplicationWindow {
@@ -11,6 +10,7 @@ ApplicationWindow {
     visible: true
     width: 960
     property real lineWidth: 1
+    property real graphWidth: lineWidth * viewModel.pktInfosSize
 
     Component.onCompleted: {
         histogram.setViewModel(viewModel)
@@ -18,6 +18,9 @@ ApplicationWindow {
 
     MainViewModel {
         id: viewModel
+        onLoadedChanged: {
+            seekBar.value = 0
+        }
     }
 
     menuBar: MenuBar {
@@ -49,13 +52,48 @@ ApplicationWindow {
     }
 
     Rectangle {
+        id: histogramPanel
         anchors.fill: parent
         color: "#1A1A1A"
 
         PacketHistogram {
             id: histogram
             lineWidth: root.lineWidth
-            anchors.fill: parent
+            anchors {
+                left: parent.left
+                right: parent.right
+                top: parent.top
+                bottom: seekBar.top
+            }
+        }
+        Slider {
+            id: seekBar
+            visible: viewModel.loaded
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+            }
+            from: 0
+            to: viewModel.pktInfosSize - width / root.lineWidth
+            stepSize: 1
+            height: 32
+            leftPadding: 0
+            rightPadding: 0
+            background: Rectangle {
+                anchors.fill: parent
+                color: "#444444"
+                border.color: "cyan"
+            }
+            handle: Rectangle {
+                color: "cyan"
+                height: parent.height
+                width: graphWidth > 0 ? parent.width * parent.width / graphWidth : 10
+                x: seekBar.leftPadding + seekBar.visualPosition * (seekBar.availableWidth - width)
+            }
+            onValueChanged: {
+                histogram.seek(value)
+            }
         }
     }
 
@@ -83,6 +121,12 @@ ApplicationWindow {
                     w = 4
                 }
                 root.lineWidth = w
+            } else {
+                if (wheel.angleDelta.y > 0) {
+                    seekBar.value += width / root.lineWidth / 3
+                } else if (wheel.angleDelta.y < 0) {
+                    seekBar.value -= width / root.lineWidth / 3
+                }
             }
         }
     }

@@ -19,6 +19,14 @@ void PacketHistogram::setViewModel(MainViewModel* viewModel)
     connect(m_viewModel, &MainViewModel::loadedChanged, this, [this]() { update(); });
 }
 
+void PacketHistogram::seek(int index)
+{
+    if (index >= 0) {
+        m_startIndex = index;
+        update();
+    }
+}
+
 void PacketHistogram::paint(QPainter* painter)
 {
     if (!m_viewModel || !m_viewModel->loaded()) {
@@ -32,8 +40,8 @@ void PacketHistogram::paint(QPainter* painter)
 
     auto& infos = m_viewModel->pktInfos();
     int maxSize = m_viewModel->maxPktSize();
-    for (int i = 0; i < infos.size(); i++) {
-        qreal x = i * m_lineWidth;
+    qreal x = 0;
+    for (int i = m_startIndex; i < infos.size(); i++) {
         if (x > width()) {
             break;
         }
@@ -41,6 +49,7 @@ void PacketHistogram::paint(QPainter* painter)
         pen.setColor(infos[i].flags != 0 ? Qt::cyan : Qt::lightGray);
         painter->setPen(pen);
         painter->drawLine(QPointF(x, height() - y), QPointF(x, height()));
+        x += m_lineWidth;
     }
 }
 

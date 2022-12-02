@@ -14,6 +14,7 @@ public:
     PacketHistogram(QQuickItem* parent = nullptr);
     ~PacketHistogram() override;
     Q_INVOKABLE void setViewModel(MainViewModel* viewModel);
+    Q_INVOKABLE void seek(int index);
     void paint(QPainter* painter) override;
     qreal lineWidth() const;
     void setLineWidth(qreal width);
@@ -24,4 +25,5 @@ signals:
 private:
     QPointer<MainViewModel> m_viewModel = nullptr;
     qreal m_lineWidth = 2;
+    int m_startIndex = 0;
 };

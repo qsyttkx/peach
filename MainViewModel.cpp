@@ -15,6 +15,8 @@ bool MainViewModel::loaded() const { return m_loaded; }
 
 QString MainViewModel::filepath() const { return m_filepath; }
 
+int MainViewModel::pktInfosSize() const { return m_pktInfos.size(); }
+
 void MainViewModel::load(QUrl filepath)
 {
     unload();
@@ -27,9 +29,11 @@ void MainViewModel::load(QUrl filepath)
     }
 
     m_loaded = true;
-    emit loadedChanged();
     m_filepath = localFilepath;
+
+    emit loadedChanged();
     emit filepathChanged();
+    emit pktInfosSizeChanged();
 }
 
 void MainViewModel::unload()
@@ -39,10 +43,11 @@ void MainViewModel::unload()
     }
     m_pktInfos.clear();
     m_maxPktSize = 0;
-
     m_loaded = false;
-    emit loadedChanged();
     m_filepath = "";
+
+    emit pktInfosSizeChanged();
+    emit loadedChanged();
     emit filepathChanged();
 }
 
@@ -84,12 +89,6 @@ bool MainViewModel::demux(const char* file)
 
         while (av_read_frame(fmt, pkt) >= 0) {
             if (pkt->stream_index == idx) {
-                // for (int i = 0; i < pkt->side_data_elems; i++) {
-                //     if (pkt->side_data[i].type == AVPacketSideDataType::AV_PKT_DATA_QUALITY_STATS) {
-                //         AVPictureType frameType = (AVPictureType)pkt->side_data[i].data[4];
-                //     }
-                // }
-
                 PktInfo info;
                 info.pts = pkt->pts;
                 info.size = pkt->size;
