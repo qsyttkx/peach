@@ -1,6 +1,7 @@
 #include "MainViewModel.h"
 
 #include <QDebug>
+#include <QTextStream>
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -16,6 +17,8 @@ bool MainViewModel::loaded() const { return m_loaded; }
 QString MainViewModel::filepath() const { return m_filepath; }
 
 int MainViewModel::pktInfosSize() const { return m_pktInfos.size(); }
+
+QString MainViewModel::selectedPktInfo() const { return m_selectedPktInfo; }
 
 void MainViewModel::load(QUrl filepath)
 {
@@ -49,6 +52,19 @@ void MainViewModel::unload()
     emit pktInfosSizeChanged();
     emit loadedChanged();
     emit filepathChanged();
+}
+
+void MainViewModel::selectPacket(int index)
+{
+    if (index >= 0 && index < m_pktInfos.size()) {
+        m_selectedPktInfo.clear();
+        QTextStream ts(&m_selectedPktInfo);
+        ts << "index: " << index << "\n";
+        ts << "pts: " << m_pktInfos[index].pts << "\n";
+        ts << "size: " << m_pktInfos[index].size << "\n";
+        ts << "flags: " << m_pktInfos[index].flags << "\n";
+        emit selectedPktInfoChanged();
+    }
 }
 
 const QList<PktInfo>& MainViewModel::pktInfos() const { return m_pktInfos; }

@@ -10,6 +10,8 @@ ApplicationWindow {
     property real lineWidth: 1
 
     height: 540
+    minimumHeight: 360
+    minimumWidth: 640
     title: viewModel.filepath.length > 0 ? ("Peach - " + viewModel.filepath) : "Peach"
     visible: true
     width: 960
@@ -78,12 +80,40 @@ ApplicationWindow {
                 hoverEnabled: true
             }
             Rectangle {
+                id: cursor
                 color: "orange"
                 height: parent.height
                 opacity: 0.6
                 visible: viewModel.loaded && histogramMouseArea.containsMouse
                 width: Math.max(root.lineWidth, 1)
                 x: Math.floor(histogramMouseArea.mouseX / root.lineWidth) * root.lineWidth
+
+                onXChanged: {
+                    viewModel.selectPacket(seekBar.value + Math.floor(histogramMouseArea.mouseX / root.lineWidth));
+                }
+            }
+            Item {
+                id: infoPanel
+                anchors.margins: 16
+                anchors.right: parent.right
+                anchors.top: parent.top
+                height: 180
+                visible: cursor.visible
+                width: 240
+
+                Rectangle {
+                    anchors.fill: parent
+                    border.color: "cyan"
+                    color: "#222222"
+                    opacity: 0.4
+                    radius: 5
+                }
+                Text {
+                    color: "lightgray"
+                    text: viewModel.selectedPktInfo
+                    x: 8
+                    y: 8
+                }
             }
         }
         Slider {
