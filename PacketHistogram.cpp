@@ -46,7 +46,11 @@ void PacketHistogram::paint(QPainter* painter)
             break;
         }
         qreal y = (qreal)infos[i].size / (qreal)maxSize * height();
-        pen.setColor(infos[i].flags != 0 ? Qt::cyan : Qt::lightGray);
+        if (infos[i].flags == 1) {
+            pen.setColor(infos[i].dts == infos[i].pts ? Qt::cyan : Qt::red);
+        } else {
+            pen.setColor(Qt::lightGray);
+        }
         painter->setPen(pen);
         painter->drawLine(QPointF(x, height() - y), QPointF(x, height()));
         x += m_lineWidth;

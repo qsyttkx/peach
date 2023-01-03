@@ -60,6 +60,7 @@ void MainViewModel::selectPacket(int index)
         m_selectedPktInfo.clear();
         QTextStream ts(&m_selectedPktInfo);
         ts << "index: " << index << "\n";
+        ts << "dts: " << m_pktInfos[index].dts << "\n";
         ts << "pts: " << m_pktInfos[index].pts << "\n";
         ts << "size: " << m_pktInfos[index].size << "\n";
         ts << "flags: " << m_pktInfos[index].flags << "\n";
@@ -106,6 +107,7 @@ bool MainViewModel::demux(const char* file)
         while (av_read_frame(fmt, pkt) >= 0) {
             if (pkt->stream_index == idx) {
                 PktInfo info;
+                info.dts = pkt->dts;
                 info.pts = pkt->pts;
                 info.size = pkt->size;
                 info.flags = pkt->flags;

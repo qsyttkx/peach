@@ -6,6 +6,7 @@
 
 // Packet信息
 struct PktInfo {
+    int64_t dts;
     int64_t pts;
     int size;
     int flags;
